@@ -17,13 +17,17 @@
   --sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --max: 74rem;
   --header: 4.25rem;
+  color-scheme: light;
 }
 
 *,
 *::before,
 *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header) + 0.6rem);
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -39,6 +43,7 @@ body {
   font-family: var(--sans);
   font-size: 1.05rem;
   line-height: 1.65;
+  overflow-wrap: break-word;
   background-color: var(--paper);
   background-image:
     radial-gradient(ellipse at 0% -10%, rgba(198, 161, 90, 0.2), transparent 42%),
@@ -51,9 +56,12 @@ img { max-width: 100%; height: auto; }
 a {
   color: var(--link);
   text-underline-offset: 0.18em;
+  overflow-wrap: anywhere;
 }
 
 a:hover { color: #07284b; }
+
+cite { font-style: italic; }
 
 .skip {
   position: absolute;
@@ -65,6 +73,9 @@ a:hover { color: #07284b; }
   z-index: 100;
   transform: translateY(-160%);
 }
+
+.skip:hover,
+.skip:focus { color: var(--ink); }
 
 .skip:focus { transform: none; }
 
@@ -78,6 +89,10 @@ a:hover { color: #07284b; }
   gap: 1rem;
   min-height: var(--header);
   padding: 0.45rem 1.1rem;
+  padding-top: max(0.45rem, env(safe-area-inset-top, 0px));
+  padding-right: max(1.1rem, env(safe-area-inset-right, 0px));
+  padding-bottom: 0.45rem;
+  padding-left: max(1.1rem, env(safe-area-inset-left, 0px));
   background: rgba(10, 24, 43, 0.96);
   color: var(--paper);
   border-bottom: 3px solid var(--brass-bright);
@@ -89,9 +104,12 @@ a:hover { color: #07284b; }
   display: flex;
   flex-direction: column;
   line-height: 1.15;
-  min-height: 44px;
+  min-height: 2.75rem;
   justify-content: center;
 }
+
+.brand:hover,
+.brand:focus-visible { color: var(--paper); }
 
 .brand strong {
   font-family: var(--serif);
@@ -109,8 +127,8 @@ a:hover { color: #07284b; }
 
 .nav-toggle {
   display: none;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 2.75rem;
+  min-width: 2.75rem;
   padding: 0.4rem 0.8rem;
   background: transparent;
   color: var(--paper);
@@ -136,7 +154,7 @@ a:hover { color: #07284b; }
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.2rem 0.55rem;
   font-size: 0.92rem;
   border-bottom: 2px solid transparent;
@@ -148,30 +166,40 @@ a:hover { color: #07284b; }
   color: white;
 }
 
-.site-header :focus-visible { outline-color: var(--brass-pale); }
-
 :focus-visible {
   outline: 3px solid #0c4f86;
   outline-offset: 3px;
 }
+
+/* The paper-page focus blue disappears on navy. Use the brass already used for light-on-navy text. */
+.site-header :focus-visible,
+.hero :focus-visible,
+.site-footer :focus-visible { outline-color: var(--brass-pale); }
 
 main { display: block; }
 
 .wrap {
   width: min(var(--max), calc(100% - 2rem));
   margin-inline: auto;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 .hero {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   min-height: calc(100vh - var(--header));
+  min-height: calc(100dvh - var(--header));
   background: var(--navy-deep);
   color: var(--paper);
 }
 
 .hero-copy {
   padding: clamp(2rem, 5vw, 4.5rem) clamp(1.25rem, 4vw, 3.5rem);
+  padding-top: clamp(2rem, 5vw, 4.5rem);
+  padding-bottom: clamp(2rem, 5vw, 4.5rem);
+  padding-left: max(clamp(1.25rem, 4vw, 3.5rem), env(safe-area-inset-left, 0px));
+  padding-right: max(clamp(1.25rem, 4vw, 3.5rem), env(safe-area-inset-right, 0px));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -229,6 +257,11 @@ main { display: block; }
   font-size: 0.98rem;
 }
 
+/* Global link blue is for the paper page. On the navy hero it fails contrast, so use the brass already used for other light-on-navy links. */
+.hero a:any-link { color: var(--brass-pale); }
+.hero a:hover,
+.hero a:focus-visible { color: white; }
+
 .hero-photo {
   margin: 0;
   position: relative;
@@ -260,8 +293,9 @@ main { display: block; }
 
 .section {
   padding: clamp(2.5rem, 6vw, 4.5rem) 0;
-  scroll-margin-top: calc(var(--header) + 0.6rem);
 }
+
+.section.band { background: rgba(255, 255, 255, 0.35); }
 
 .section h2 {
   font-family: var(--serif);
@@ -298,18 +332,18 @@ main { display: block; }
   gap: 0.75rem;
   margin: 1.5rem 0 0.5rem;
   padding: 0;
-  list-style: none;
 }
 
-.facts li {
+.facts > div {
   background: var(--card);
   border: 1px solid var(--line);
   padding: 0.85rem 1rem 0.95rem;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
 }
 
-.facts .label {
+.facts dt {
   display: block;
+  margin: 0;
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -317,9 +351,9 @@ main { display: block; }
   font-weight: 700;
 }
 
-.facts strong {
+.facts dd {
   display: block;
-  margin-top: 0.2rem;
+  margin: 0.2rem 0 0;
   font-family: var(--serif);
   font-size: 1.12rem;
   font-weight: 600;
@@ -417,7 +451,7 @@ blockquote.pull footer {
 }
 
 button.btn, .btn {
-  min-height: 44px;
+  min-height: 2.75rem;
   padding: 0.45rem 0.85rem;
   font: inherit;
   background: var(--navy);
@@ -460,7 +494,7 @@ button.btn:hover, .filters button:hover { background: #17365c; color: white; }
   grid-template-areas: "num when" "num where";
   column-gap: 0.8rem;
   cursor: pointer;
-  min-height: 44px;
+  min-height: 2.75rem;
 }
 
 .stop-btn .num {
@@ -649,7 +683,8 @@ button.btn:hover, .filters button:hover { background: #17365c; color: white; }
   padding: 2rem 1.2rem;
 }
 
-.family-mat h3 {
+.family-mat h3,
+.family-mat .mat-title {
   font-family: var(--serif);
   font-size: clamp(1.6rem, 3vw, 2.2rem);
   font-weight: 600;
@@ -667,6 +702,9 @@ button.btn:hover, .filters button:hover { background: #17365c; color: white; }
   background: var(--navy-deep);
   color: #e6dccb;
   padding: 1.6rem 0 2rem;
+  padding-right: max(0px, env(safe-area-inset-right, 0px));
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+  padding-left: max(0px, env(safe-area-inset-left, 0px));
   border-top: 3px solid var(--brass-bright);
 }
 
@@ -706,8 +744,8 @@ dialog.lightbox::backdrop { background: rgba(6, 10, 16, 0.82); }
 #lb-caption a { color: var(--brass-pale); }
 
 .lb-nav, #lb-close {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   background: transparent;
   color: white;
   border: 1px solid rgba(255,255,255,0.4);
@@ -722,21 +760,39 @@ dialog.lightbox::backdrop { background: rgba(6, 10, 16, 0.82); }
   background: rgba(0,0,0,0.45);
 }
 
-.sr {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
+.sr:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 @media (max-width: 860px) {
-  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
-  .site-nav { display: none; position: absolute; left: 0; right: 0; top: 100%; background: var(--navy-deep); padding: 0.3rem 0.6rem 0.8rem; border-bottom: 3px solid var(--brass-bright); }
-  .site-nav.is-open { display: block; }
+  .site-header { flex-wrap: wrap; }
+  .nav-toggle { display: none; }
+  .js .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+  .site-nav {
+    flex-basis: 100%;
+    position: static;
+    padding: 0.2rem 0 0.4rem;
+  }
+  .js .site-nav {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    flex-basis: auto;
+    background: var(--navy-deep);
+    padding: 0.3rem 0.6rem 0.8rem;
+    border-bottom: 3px solid var(--brass-bright);
+  }
+  .js .site-nav.is-open { display: block; }
   .site-nav ul { flex-direction: column; }
   .hero, .split, .voyage-layout { grid-template-columns: 1fr; }
   .map-col { position: static; }
@@ -753,6 +809,18 @@ dialog.lightbox::backdrop { background: rgba(6, 10, 16, 0.82); }
   .map { height: 18rem; }
   a { text-decoration: underline; }
   body { background: white; }
+}
+
+@media (forced-colors: active) {
+  :focus-visible { outline-color: Highlight; }
+  .hero .rule,
+  .hero-monogram .bar {
+    background: CanvasText;
+  }
+  .tag,
+  .callout,
+  .site-header,
+  .site-footer { border-color: CanvasText; }
 }
 
 
@@ -798,7 +866,8 @@ dialog.lightbox::backdrop { background: rgba(6, 10, 16, 0.82); }
   padding-left: 1.2rem;
 }
 .questions li { margin: 0.7rem 0; }
-.remembered {
+.remembered,
+#remembered .note {
   max-width: 42rem;
 }
 .remembered blockquote {
